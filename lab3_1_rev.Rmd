@@ -1,5 +1,5 @@
 ---
-title: "Dplyr"
+title: "dplyr::select(), mutate(), and pipes"
 author: "Joel Ledford"
 date: "Winter 2019"
 output:
@@ -17,9 +17,10 @@ In the last section you were introduced to the **tidyverse** and the function `f
 ## Resources
 - [R for Data Science](https://r4ds.had.co.nz/)
 
-## Learning Goal
+## Learning Goals
 *At the end of this exercise, you will be able to:*    
-1. Use the `filter()`, `select()`, and `arrange()` functions of dplyr to organize and sort data frames. 
+1. Use the `filter()`, `select()`, and `arrange()` functions of dplyr to organize and sort data frames.  
+2. Combine dplyr functions to organize and sort data frames using pipes.  
 
 ## Libraries
 ```{r message=FALSE, warning=FALSE}
@@ -103,6 +104,23 @@ fish %>%
 ## Practice
 1. Build a dataframe focused on the scalelengths of `fish_id` 300 and 301. Use `arrange()` to sort from smallest to largest scalelength. Use pipes!
 
+## Dplyr: mutate()
+`mutate()` is used to add new columns to a data frame. When you use mutate() the original data used are preserved. We will briefly practice `mutate()` here and come back to it in more detail later.  
+
+```{r}
+fish %>% 
+  select(lakeid, length, fish_id, scalelength) %>% 
+  filter(lakeid=="AL") %>% 
+  arrange(fish_id) %>% 
+  mutate(scale_ratio=(length/scalelength))
+```
+
+```{r}
+names(fish)
+```
+
+## Practice
+1. Add a new column to the fish data that is radii_length_mm divided by scalelength. Add another column that scales this number to a percentage.
 
 ## Wrap-up
 Please review the learning goals and be sure to use the code here as a reference when completing the homework.
