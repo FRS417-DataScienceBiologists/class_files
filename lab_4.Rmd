@@ -1,5 +1,5 @@
 ---
-title: "Lab 4"
+title: "Lab 5"
 author: "Joel Ledford"
 date: "Winter 2019"
 output: ioslides_presentation
@@ -12,15 +12,8 @@ library("jpeg")
 
 ## Setup
 - Please download `class_files` from [GitHub](https://github.com/FRS417-DataScienceBiologists)
-- Please open your homework in RStudio
-- Open a browser window to your GitHub repository
-
-## Tidyverse
-- A collection of packages designed to work together for data analysis
-- Consistent, intuitive, and much easier to use
-```{r out.width = "100%", fig.align = "center"}
-knitr::include_graphics("tidyverse1.png")
-```
+- Open a browser window to your GitHub repository & load your homework
+- Open a new RMarkdown file and load the tidyverse
 
 ## Today
 1. Review any homework questions.
