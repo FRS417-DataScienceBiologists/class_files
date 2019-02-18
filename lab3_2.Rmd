@@ -1,5 +1,5 @@
 ---
-title: "Tidy data"
+title: "Tidy Data"
 author: "Joel Ledford"
 date: "Winter 2019"
 output:
@@ -29,13 +29,10 @@ The  quote sums above sums up much of the work in data science. Simply put, most
 2. Evaluate a dataset as tidy or untidy.  
 3. Use the functions of tidyr to transform messy data to tidy data.
 
-## tidy means:
-
 ## Load the library
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 ```
-
 
 ## Tidy data
 Most data that you will encounter are organized incorrectly for work in R and, as you might expect, the tools used to transform data are a core part of the tidyverse. I will attempt to summarize the most important points below, but you should read chapter 12 of the data science text (https://r4ds.had.co.nz/tidy-data.html).  
@@ -85,11 +82,9 @@ Scientists frequently use excel spreadsheets that are organized to make data ent
 By far, the most common problem is to have **column names actually represent values of a variable**. Our `non_tidy1` example has columns a, b, c, and d that actually represent different drug trials.  
 
 ## gather()
-problem with data is that a, b, c, d are not column names.the column name is drugs.A, B, c, D are variables.so we need to take that data of what margaret is like for A, what Hawkguy is like for A, what trapper is like for A...ect. Each row needs to have 1 observation per drug. also R is based on vectors. a character and number cannot mix
 gather() is the function used most when dealing with non-tidy data. It allows us to transform wide data into long data.  
 ```{r}
-non_tidy1 %>% 
-  gather(a, b, c, d, key="drug", value="heartrate")
+non_tidy1
 ```
 
 The syntax to gather() is a bit strange. From the [Tidyr, R for Data Science](https://r4ds.had.co.nz/tidy-data.html#unite) text, you need to know three things in order to use the function:  
@@ -134,15 +129,9 @@ tb_data
 1. Are these data tidy? Why not? Identify the specific problem(s).
 
 2. Use gather() to tidy the data.
-```{r}
-tb_data %>%
-  gather('X1999', 'X2000', key="year", value="rate")
-```
-
 
 ## separate()
 In our next example, we have  the sex of each patient included with their name. Are these data tidy? No, there is more than one value per cell in the patient column and the columns a, b, c, d once again represent values.
-#not tidy bc patient includes 2 observations: name and sex
 ```{r}
 non_tidy2 <- data.frame(
   patient= c("Margaret_f", "Frank_m", "Hawkeye_m", "Trapper_m", "Radar_m", "Henry_m"),
@@ -155,9 +144,8 @@ non_tidy2 <- data.frame(
 
 We need to start by separating the patient names from their sexes. `separate()` needs to know which column you want to split, the names of the new columns, and what to look for in terms of breaks in the data.
 ```{r}
-# serparate by underscore
 non_tidy2 %>% 
-  separate(patient, into= c("patient_name", "sex"), sep = "_")
+  separate(patient, into= c("patient", "sex"), sep = "_")
 ```
 
 This is great; we have separated sex from patient. Are the data tidy? Not yet. We still need to use `gather()`.
@@ -179,13 +167,7 @@ tidy2 %>%
 ## rename()
 The rename function is actually part of *dplyr*, but I put it here because I think of it as part of transforming untidy data.
 ```{r}
-#assign new names
-#assign to neew object to not loose renames
-tidy3 <-
-  tidy2 %>% 
-  dplyr::rename(MASH_character = patient, Sex = sex, Drug =
-                  drug, Heartrate_bpm = heartrate)
-tidy3
+tidy2
 ```
 
 Let's say I don't like the names of the columns. They can be renamed, just remember to replace or build a new object to keep things clean. (syntax is *new name* = *old name*)
@@ -213,13 +195,6 @@ faces
 1. Are these data tidy? Why or why not?  
 
 2. Tidy the data and place them into a new dataframe.
-```{r}
-tidyFaces <- faces %>% 
-  separate(ParticipantID_sex, into= c("participant", "sex"), sep = "_") %>% 
-  gather(Face_1, Face_2, Face_3, key="Faces", value="identification")
-tidyFaces
-```
-
 
 3. Use `rename()` to rename a few columns for practice.
 
