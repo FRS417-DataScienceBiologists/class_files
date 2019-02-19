@@ -12,7 +12,7 @@ output:
 ---
 
 ## Review
-Now that you have been introduced to `ggplot`, we need to practice a few more plot types and learn how to manipulate the aesthetics of plots to better suit our needs. Aesthetics can make a significant difference visually, but you can take it too far so remember that our goal is to produce clean plots that are not too distracting.  
+Now that you have been introduced to `ggplot`, we need to practice a few more plot types and learn how to manipulate the aesthetics of plots to better suit our needs. Aesthetics can make a significant difference, but you can take it too far so remember that the goal is to produce clean plots that are not too distracting.  
 
 ##Resources
 - [ggplot2 cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
@@ -33,11 +33,31 @@ Reference: Tamburello N, Cote IM, Dulvy NK (2015) Energy and the scaling of anim
 Data: http://datadryad.org/resource/doi:10.5061/dryad.q5j65/1
 ```{r message=FALSE, warning=FALSE}
 homerange <- 
-  readr::read_csv("data/Tamburelloetal_HomeRangeDatabase.csv")
+  readr::read_csv("data/Tamburelloetal_HomeRangeDatabase.csv", na = c("", " ", "NA", "#N/A", "-999"))
 ```
 
-### Box Plots
-Let's filter out carnivorous mammals. We can use a boxplot to visualize the range of body mass by family.
+Notice that by including common options for NA's, we improve the way data are read into R.
+```{r}
+glimpse(homerange)
+```
+
+## Box Plots
+Boxplots help us visualize a range of values. So, on the x-axis we typically have something categorical and the y-axis is the range. In the case below, we are plotting `log10.mass` by taxonomic class in the homerange data. `geom_boxplot()` is the geom type for a standard boxplot. The center line in each box represents the median, not the mean.
+```{r}
+homerange %>% 
+  ggplot(aes(x=class, y=log10.mass))+
+  geom_boxplot()
+```
+
+## Practice
+1. There are more herbivores than carnivores in the homerange data, but how do their masses compare? Make a boxplot that compares their masses. Use `log10.mass`.
+```{r}
+homerange %>% 
+  ggplot(aes(x=trophic.guild, y=log10.mass))+
+  geom_boxplot()
+```
+
+2. Practice your dplyr skills and filter out carnivorous mammals. 
 ```{r}
 carni_mammals <- 
   homerange %>% 
@@ -45,53 +65,24 @@ carni_mammals <-
 carni_mammals
 ```
 
+3. Now use a boxplot to visualize the range of body mass by family of carnivore.
 ```{r}
 carni_mammals %>% 
   ggplot(aes(x=family, y=log10.mass))+
   geom_boxplot()+
-  theme(axis.text.x = element_text(angle = 60, hjust=1))
-```
-
-## Practice
-1. What do you think those solid lines represent? Use `count` to determine which families have the largest and smallest sample sizes.
-```{r}
-carni_mammals %>% 
-  count(family) %>% 
-  arrange((n))
-```
-
-```{r}
-carni_mammals %>% 
-  count(family) %>% 
-  arrange(desc(n))
-```
-
-2. Rebuild the plot only for the top five families with the largest sample sizes. How is `ggplot` ordering families on the x-axis?
-```{r}
-homerange %>% 
-  filter(family=="felidae" | family=="mustelidae" | family=="canidae" | family=="soricidae" | family=="herpestidae") %>% 
-  ggplot(aes(x=family, y=log10.mass))+
-  geom_boxplot()
-```
-
-3. There are more herbivores than carnivores in the homerange data, but how do their masses compare? Make a boxplot that compares their masses. Use `log10.mass`.
-```{r}
-homerange %>% 
-  filter(taxon=="mammals") %>% 
-  ggplot(aes(x=trophic.guild, y=log10.mass))+
-  geom_boxplot()
+  coord_flip()
 ```
 
 ## Aesthetics: Labels
 Now that we have practiced scatterplots, barplots, and boxplots we need to learn how to adjust their appearance to suit our needs. Let's start with labelling x and y axes.  
 
-In this example, we explored the relationship between body mass and homerange.
+In this example from part 1, we explored the relationship between body mass and homerange.
 ```{r}
 ggplot(data=homerange, mapping=aes(x=log10.mass, y=log10.hra)) +
   geom_point()
 ```
 
-The plot looks clean, but it is incomplete. A reader unfamiliar with the data might have a difficult time interpreting the plot with labels. To add labels, we use the `labs` command.
+The plot looks clean, but it is incomplete. A reader unfamiliar with the data might have a difficult time interpreting the current labels. To add custom labels, we use the `labs` command.
 ```{r}
 ggplot(data=homerange, mapping=aes(x=log10.mass, y=log10.hra)) +
   geom_point()+
@@ -100,7 +91,7 @@ ggplot(data=homerange, mapping=aes(x=log10.mass, y=log10.hra)) +
        y = "Homerange (log10)")
 ```
 
-We can improve the plot further by adjusting the size and condition of the text.
+We can improve the plot further by adjusting the size and face of the text. We do this using `theme()`.
 ```{r}
 ggplot(data=homerange, mapping=aes(x=log10.mass, y=log10.hra)) +
   geom_point()+
@@ -112,7 +103,7 @@ ggplot(data=homerange, mapping=aes(x=log10.mass, y=log10.hra)) +
         axis.title=element_text(size=12))
 ```
 
-The `rel` option changes the relative size of the title to keep things consistent. Adding `hjust` allows control of title position.
+The `rel()` option changes the relative size of the title to keep things consistent. Adding `hjust` allows control of title position.
 ```{r}
 ggplot(data=homerange, mapping=aes(x=log10.mass, y=log10.hra)) +
   geom_point()+
@@ -123,7 +114,7 @@ ggplot(data=homerange, mapping=aes(x=log10.mass, y=log10.hra)) +
 ```
 
 ## Practice
-1. Make a plot that shows the number of individuals per locomotion type. Be sure to provide a title and label the axes appropriately.
+1. Make a barplot that shows the number of individuals per locomotion type. Be sure to provide a title and label the axes appropriately.
 ```{r}
 homerange %>% 
   ggplot(aes(x=locomotion))+
@@ -135,7 +126,7 @@ homerange %>%
 ```
 
 ## Other Aesthetics
-There are lots of options for aesthtics. An aesthetic can be either numeric or categorical. `color` is a common option; notice that an appropriate key is displayed when you use one of the aesthetic options.
+There are lots of options for aesthtics. An aesthetic can be assigned to either numeric or categorical data. `color` is a common option; notice that an appropriate key is displayed when you use one of these options.
 ```{r}
 homerange %>% 
   ggplot(aes(x=log10.mass, y=log10.hra, color=locomotion))+
@@ -144,6 +135,8 @@ homerange %>%
 
 `size` adjusts the size of points relative to a continuous variable.
 ```{r}
+options(scipen = 999) #disable scientific notation
+
 homerange %>% 
   ggplot(aes(x=log10.mass, y=log10.hra, size=mean.mass.g))+
   geom_point()
@@ -168,7 +161,7 @@ homerange %>%
   theme(plot.title = element_text(size = rel(1.25)))
 ```
 
-2. Make a boxplot that compares thermoregulation type by mog10.mass. group and fill by class. Label the axes and provide a title.
+2. Make a boxplot that compares thermoregulation type by log10.mass. Group and fill by class. Label the axes and provide a title.
 ```{r}
 homerange %>% 
   ggplot(aes(x=thermoregulation, y=log10.mass, group=class, fill=class))+
@@ -182,4 +175,4 @@ homerange %>%
 ## Wrap-up
 Please review the learning goals and be sure to use the code here as a reference when completing the homework.
 
-See you next time!
+-->[Home](https://jmledford3115.github.io/datascibiol/)
