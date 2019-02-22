@@ -40,7 +40,12 @@ At the end of the exam, upload the complete .Rmd file to your GitHub repository.
 
 
 9. The column titled `INSTNM` is the institution name. We are only interested in the University of California colleges. Run the code below and look at the output. Are all of the columns tidy? Why or why not?
-
+```{r}
+univ_calif <- 
+  colleges %>% 
+  filter_all(any_vars(str_detect(., pattern = "University of California")))
+univ_calif
+```
 
 10. Use `separate()` to separate institution name into two new columns "UNIV" and "CAMPUS".
 
